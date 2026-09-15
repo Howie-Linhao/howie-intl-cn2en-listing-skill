@@ -320,14 +320,16 @@ HTML 插入时生成的 `border-bottom`（`tcBorders`）在设完列宽/外框�
 
 | 方式 | 对方要做的 | 更新方式 |
 |---|---|---|
-| **A. GitHub 仓库（推荐）** | 在对话里说一句「从这个仓库安装技能：`https://github.com/Howie-Linhao/howie-intl-cn2en-listing-skill`」→ 助手自动 clone 到 `~/.workbuddy/skills/intl-cn2en-listing`。**零下载、零解压、零放目录** | 你 push 新 commit，对方说「更新一下这个技能」即可（等价 `git pull`） |
+| **A. GitHub 仓库（推荐）** | 在对话里说一句「从这个仓库安装技能：`https://github.com/Howie-Linhao/howie-intl-cn2en-listing-skill`」→ 助手自动 clone 到 `~/.workbuddy/skills/intl-cn2en-listing`。**零下载、零解压、零放目录** | 你重跑 `python push_api.py <PAT>` 追加一个提交（**本机 git push 走代理必失败，不要用**），对方说「更新一下这个技能」即可 |
 | **B. 发 zip** | 把 `国际站速卖通中转英-skill.zip` 拖进 WorkBuddy 说「帮我安装这个技能包」→ 助手自己解压安装（包内含 `安装.py` 兜底） | 重新发一次新 zip |
 | **C. 一键安装器** | 解压后跑 `python 安装.py`；`python 安装.py <包.zip>` 可直接吃 zip；`--check` 只体检 | 覆盖安装即可 |
 
 > ⚠️ **方式 A 的前提是仓库已真实发布**。把链接发给对方**之前**先自己打开一次：
 > 看到仓库页面才算成功，**404 说明仓库还没建** —— 此时对方照着装取不到技能，助手只能自由发挥，
 > 出来的文档不会符合本技能的模板（会少两栏逐句对照表、`/` 占位、行距等固定形态）。
-> 发布用 `发布.py --token <PAT>`（建仓库 + 推送 + 自检一条命令），或见 `推送步骤.md`。
+> 发布与更新用 **`push_api.py <PAT>`**：走 GitHub Git Data API 直传（blobs → tree → commit → refs），
+> **不依赖本地 git、不写本地磁盘**。本机 `git push/fetch` 走代理会 `CONNECT tunnel failed 502`，
+> 且 C 盘写满曾把本地 `.git` 写坏 —— **本机不要用 git 命令发布**。详见 `推送步骤.md`。
 > 对方装完请他自检：问助手「列出 `.workbuddy/skills` 下的技能」应看到 `intl-cn2en-listing`；
 > 触发时助手**应先反问品牌 / 语言 / 图片形态**，不问就动手 = 没装上。
 
