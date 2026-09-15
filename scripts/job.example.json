@@ -1,0 +1,79 @@
+{
+  "_note": "作业文件示例（BD111 珍珠镍壁灯实战节选）。pairs 为句对数组，每个句对 = 对照表里的一行（左格中文、右格英文）。img 相对 image_root，切片写 slices/xxx.jpg 且文件名用 ASCII。cap 格式『图 NN · 中文小标题（位置 1/2） / English Subtitle (Part 1/2)』。图内无可翻译文案时：中文格写一句说明，英文格写 \"/\"（写英文说明句会被误当成上架文案）。brand / target_lang 由开工前的确认结果填入。材质「碳素钢」统一写 Metal；颜色一律查 references/translation-playbook.md 第七节色卡。material 是本型号的材质清单，用于判定同名多译色（如砂岩黑）：材质里只有金属、无布 → Matte Black；材质含亚麻/布艺 → 脚本会中止生成并要求先与你确认。",
+  "title_cn": "BD111 珍珠镍壁灯 · 详情页中英文案对照",
+  "title_en": "BD111 Matte Brushed Nickel Wall Lamp — Bilingual Listing Copy",
+  "brand": "Aisilan",
+  "target_lang": "English (US) · 简洁 · 高端品牌调性",
+  "platforms": "阿里巴巴国际站 / 速卖通（AliExpress）",
+  "material": ["玻璃", "碳素钢"],
+  "notes": [
+    "排版说明：每张图片下方是一张中英对照表 —— 左列为图内中文原文，右列为对应英文文案（EN），一行一个句对，可逐行复制上架。",
+    "斜杠说明：英文栏为「/」表示该图片（或该行）没有可翻译的文案，属于正常情况、不是漏译。",
+    "材质口径：「碳素钢」统一译为 Metal（不再写 Carbon Steel），全品类口径一致。",
+    "颜色口径：颜色名称统一采用品牌标准色卡译法，本型号「珍珠镍」= Matte brushed nickel。",
+    "角标说明：图 02–05、08–13 图内右下角均为同一枚产品角标，文案为「Cohen Ambient Small Wall Lamp · DESIGN BY AISILAN · 金属为骨，光影为魂」（图 02、03 仅前两段），统一英文写法为「Cohen Ambient Small Wall Lamp · Designed by Aisilan · Framed in metal, ensouled by light.」。因各图完全一致，正文不再逐图重复列出。",
+    "署名修改：图内原「DESIGN BY SAKA」统一改为「DESIGN BY AISILAN」，英文文案写法为「Designed by Aisilan」，原图角标文字需设计端同步替换。",
+    "注：图中「萨摩护眼灯光谱」为光源对比示意，不确定是否为品牌名，英文统一处理为 Eye-Care Light Spectrum。",
+    "注：图 14 中文小标题序号疑似有误（「三、五」与「二、四」标题重复），已按原图忠实保留，未自行改号。",
+    "待确认：图 06 中 225mm、25mm 两个数值在原图上未标注归属，现按原图数字串原样呈现并附英寸，英文侧未硬套归属名称。"
+  ],
+  "image_root": "C:/Users/Administrator/WorkBuddy/2026-09-14-13-42-10/assets/bd111",
+  "out": "C:/Users/Administrator/WorkBuddy/2026-09-14-13-42-10/BD111珍珠镍壁灯-详情页中英文案对照.docx",
+  "blocks": [
+    {
+      "img": "BD111镍详情0817_01.jpg",
+      "cap": "图 01 · 封面场景 / Cover Visual",
+      "pairs": [
+        ["DESIGN BY SAKA（图内文字，改为 DESIGN BY AISILAN）", "Designed by Aisilan"]
+      ]
+    },
+    {
+      "img": "BD111镍详情0817_02.jpg",
+      "cap": "图 02 · 设计理念 / Design Concept",
+      "pairs": [
+        ["「DESIGN CONCEPT」", "\"DESIGN CONCEPT\""],
+        ["我们以科恩命名：不是要复刻宗教的庄严，而是想找回一种被现代生活释解的仪式感。", "Named after Cohen — not to reenact the solemnity of faith, but to reclaim a sense of ritual as redefined by modern living."],
+        ["当夜幕降临、床头的一盏灯亮起，那不仅是照明，更是一场私人的光的仪式。", "When night falls and the lamp beside the bed glows to life, it is never merely illumination — it is a private ceremony of light."]
+      ]
+    },
+    {
+      "img": "BD111镍详情0817_04.jpg",
+      "cap": "图 04 · 细节设计 · 底座与灯臂 / Detail — Backplate & Arm",
+      "pairs": [
+        ["本图仅有产品细节画面与角标，无文案（角标见文首说明）。", "/"]
+      ]
+    },
+    {
+      "img": "slices/BD111_06_b.jpg",
+      "cap": "图 06 · 规格参数（图下段 2/2） / Specifications (Part 2/2)",
+      "pairs": [
+        ["MATERIAL　材质：玻璃、碳素钢", "MATERIAL: Glass, Metal"],
+        ["COLOR　颜色：珍珠镍", "COLOR: Matte brushed nickel"],
+        ["SIZE　灯体尺寸：Ø135*H260mm（Ø5.31*H10.24in）", "SIZE: Ø135 × H260 mm (Ø5.31 × H10.24 in)"],
+        ["POWER　功率：3W", "POWER: 3W"],
+        ["COLOR TEMP　色温：3000K", "COLOR TEMP: 3000K"],
+        ["ENVIRONMENT　环境：客厅、卧室、餐厅、商业空间", "APPLICATION: Living Room, Bedroom, Dining Room, Commercial Space"]
+      ]
+    },
+    {
+      "img": "slices/BD111_13_b.jpg",
+      "cap": "图 13 · 科学品质标准（一）（图下段 2/2） / Scientific Quality Standards (1) — Part 2/2",
+      "pairs": [
+        ["产品标准 / 科学品质标准 / Notice", "Product Standards / Scientific Quality Standards / Notice"],
+        ["符合国际安全标准：IEC 60598 系列", "Compliant with International Safety Standards: IEC 60598 Series"],
+        ["一、安全性检测", "I. Safety Testing"],
+        ["1. 电气安全：接地与绝缘、耐压测试、防触电保护", "1. Electrical Safety: grounding and insulation, dielectric withstand testing and electric shock protection"],
+        ["II 类灯具带电部件不可触及，基本绝缘部件不得暴露于外表面；接线端子需稳固，避免锐边损伤绝缘层。", "For Class II luminaires, live parts must be inaccessible and basic insulation must not be exposed on outer surfaces; terminal blocks must be securely fixed, with sharp edges dressed to prevent damage to insulation."]
+      ]
+    },
+    {
+      "img": "slices/BD111_17_a.jpg",
+      "cap": "图 17 · 安装步骤 ①-②（图上排 1/2） / Installation Steps 1-2 (Part 1/2)",
+      "pairs": [
+        ["① 先把挂板拆出来。", "① Detach the mounting bracket from the lamp body."],
+        ["② 在天花板上钻安装孔，打入膨胀胶塞（木天花板不用打胶塞），用自攻螺丝把挂板固定在天花板上，并确定安装牢固。", "② Drill mounting holes in the ceiling and insert expansion plugs (not required for wooden ceilings). Fix the mounting bracket to the ceiling with self-tapping screws and make sure it is firmly seated."],
+        ["②（续）将 220V 试电接到端子台一端，火线接 L，零线接 N。", "② (cont.) Connect the 220V test lead to one end of the terminal block — live wire to L, neutral wire to N."]
+      ]
+    }
+  ]
+}
