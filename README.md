@@ -51,9 +51,10 @@ scripts/build_bilingual_doc.py        主生成器（读 job.json 生成整份�
 scripts/slice_long_images.py          长图切分（含校验条带）
 scripts/verify_docx.py                交付前校验（不依赖渲染服务）
 scripts/color_caliber.py              颜色口径闸门（同名多译色按材质判定）
+scripts/glossary_check.py             固定文案口径闸门（客户指定译法 / 违禁变体）
 scripts/edsdk_docx.py                 editor_sdk 调用封装（路径自动探测）
 scripts/job.example.json              作业文件示例
-references/translation-playbook.md    意译原则 / 术语表 / 色卡 / 单位换算
+references/translation-playbook.md    第〇节固定文案表 / 意译原则 / 术语表 / 色卡 / 单位换算
 安装.py                                一键安装器
 ```
 

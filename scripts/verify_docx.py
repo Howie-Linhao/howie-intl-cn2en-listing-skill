@@ -25,6 +25,9 @@ TC_RE = re.compile(r"<w:tc>.*?</w:tc>", re.S)
 TEXT_RE = re.compile(r"<w:t(?:\s[^>]*)?>(.*?)</w:t>", re.S)
 
 NO_COPY = "/"
+# 一行里出现 ≥2 个「数字+mm」= 多个尺寸挤在同一行（尺寸板块要求一个尺寸一行）
+DIM_RE = re.compile(r"\d+(?:\.\d+)?\s*mm", re.I)
+TIPS_MARK = "※ 提示"
 
 
 def text_of(x):
@@ -61,7 +64,7 @@ def shaped(path, expect=None, expect_pairs=None):
     inches = len(re.findall(r"\((?:Ø)?[0-9.]+in\)", xml))
 
     # ---- 表格结构逐格分析（表格版） ----
-    pairs_n = slash_n = empty_en = miss_cn = 0
+    pairs_n = slash_n = empty_en = miss_cn = dim_multi = 0
     for tbl in tables_xml:
         body = TR_RE.findall(tbl)[1:]          # 跳过表头行
         for r in body:
@@ -76,6 +79,8 @@ def shaped(path, expect=None, expect_pairs=None):
                 empty_en += 1
             if not cn_txt:
                 miss_cn += 1
+            if len(DIM_RE.findall(cn_txt)) >= 2:
+                dim_multi += 1
     # 旧格式（整段中文 + 整段英文）兜底统计
     if not tables_xml:
         cn_rows = xml.count('w:val="777777"')
@@ -90,6 +95,8 @@ def shaped(path, expect=None, expect_pairs=None):
     print("tables      : %d   rows=%d   tcBorders=%d   shd=%d"
           % (len(tables_xml), rows, tc_borders, shd))
     print("sentence rows: %d   (英文为「/」的行=%d)" % (pairs_n, slash_n))
+    print("size rows   : %d   (含 ≥2 个尺寸的行，期望 0)" % dim_multi)
+    print("tips        : %d   (中文提示段，尺寸板块须有 1 条)" % xml.count(TIPS_MARK))
     print("keepNext    :", keep, "  (期望 = 块数 × 2)")
     print("centered    : images=%d  captions=%d" % (centered_img, centered_cap))
     print("line spacing: w:line=%d   (期望 ≈ 句对×2 + 表头×2 = %d)"
@@ -118,6 +125,9 @@ def shaped(path, expect=None, expect_pairs=None):
               % (line_sp, pairs_n))
     if tables_xml and cm.get("top", 0) < 60:
         print("[WARN] 行内边距偏小（tblCellMar top=%s），句与句之间会挤" % cm.get("top"))
+    if dim_multi:
+        print("[WARN] 有 %d 行把 ≥2 个尺寸塞在同一行 —— 尺寸板块应一个尺寸一行"
+              "（挤在一起分不清哪条引线对哪个数）；见手册 4.1" % dim_multi)
     if centered_cap != len(caps):
         print("[FAIL] 有图注未居中")
         ok = False

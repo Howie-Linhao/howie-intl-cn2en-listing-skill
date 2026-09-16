@@ -20,15 +20,20 @@ job.json 结构见 job.example.json。每块 = 图片切片 → 图注 → **中
   7. 同名多译色（砂岩黑 / 中国红）由 color_caliber 闸门把关：材质只有金属、无布
      → 自动取 Matte Black；材质含亚麻/布艺或判不出来 → **中止生成（退出码 2）**
      并输出待确认问题，由 Agent 去问用户。见手册 7.1。
+  8. 尺寸板块（块内写 "kind": "size"）：一个尺寸 = 一行，禁止把 225/485/260/25mm
+     挤进同一行（挤在一起分不清哪条引线对哪个数）；且该块自动带一条中文提示
+     （部位文案仅定位，客户指定口径）。见 references/translation-playbook.md 4.1。
 """
 import html
 import json
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import color_caliber as C  # noqa: E402
 import edsdk_docx as S  # noqa: E402
+import glossary_check as G  # noqa: E402
 
 IMG_W = 540
 COL_W = (4400, 5800)          # 两列列宽（dxa，合计 10200 ≈ A4 减 1.5cm 边距的正文宽）
@@ -46,6 +51,20 @@ LINE_H = "line-height:150%"                  # 单元格内行距（映射为 w:
 # 避免读者把「说明性英文」误当成可直接上架的 Listing 文案。
 NO_COPY = "/"
 NO_COPY_ALIASES = {"", "/", "-", "—", "–", "n/a", "N/A", "None"}
+
+# ---- 中文提示行（如尺寸板块的判读口径）----
+# 与正文的「灰（中文）/ 深蓝（英文）」区分开，读者一眼看出这句是说明而不是文案。
+TIP_STYLE = "font-size:9pt;color:#B26A00"
+
+# 尺寸板块的固定中文提示（客户指定口径，逐字照抄）
+SIZE_TIP = "部位文案仅为定位作用，如原图只有尺寸则忽略该英文文案，只取用 mm 及 inch 尺寸。"
+
+# 哪些 kind 算「尺寸板块」：自动带提示 + 自动把一行多个尺寸拆成一个尺寸一行
+SIZE_KINDS = ("size", "dimension", "dimensions", "尺寸", "尺寸标注")
+
+# 「一行塞了多个尺寸」的判定：分隔符切分后，每一份中文都要含一个 mm 数值
+SPLIT_SEP_RE = re.compile(r"\s*[/／|｜]\s*")
+DIM_RE = re.compile(r"\d+(?:\.\d+)?\s*mm", re.I)
 
 
 def esc(s):
@@ -137,13 +156,74 @@ def legacy_html(item):
          EN_NONE_STYLE if blank else EN_STYLE, escbr(en))
 
 
+def tip_lines(item):
+    """本块要渲染的中文提示行的列表。
+
+    取值优先级：
+      1. 块内**显式** `tip_cn`（字符串或数组；传 "" / false / [] = 明确不要提示）；
+      2. 否则若 `kind` 属尺寸类 → 固定提示 `SIZE_TIP`；
+      3. 都不是 → 空。
+    显式写了 `tip_cn` 就完全以它为准（哪怕块是尺寸块）——方便按单调整措辞。
+    """
+    if "tip_cn" in item:
+        tip = item["tip_cn"]
+    elif str(item.get("kind", "")).strip().lower() in SIZE_KINDS:
+        tip = SIZE_TIP
+    else:
+        tip = ""
+    if not tip:
+        return []
+    if isinstance(tip, str):
+        tip = tip.split("\n")
+    return [str(t).strip() for t in tip if str(t).strip()]
+
+
+def tip_html(item):
+    """中文提示段落：放在**图注之后、表格之前**，读者先看到判读口径再看行。"""
+    return "".join('<p style="%s"><b>※ 提示：</b>%s</p>' % (TIP_STYLE, esc(t))
+                   for t in tip_lines(item))
+
+
+def split_size_pairs(item):
+    """尺寸板块：「一个格子里塞了多个尺寸」的行拆成一行一个尺寸。
+
+    为什么必须拆：尺寸图上每个数值都靠一条引线指向某个部位，五个数值挤在一行
+    时读者分不清哪个数对应哪条线（客户明确反馈「放在一起不直观」）。
+
+    只在**同时满足**以下条件时才拆，否则原样保留（绝不猜）：
+      1. 本块 `kind` 属尺寸类，且未写 `"no_split": true`；
+      2. 英文栏不是 `/` 之类占位；
+      3. 中文栏与英文栏能用**同一个**分隔符（/ ／ | ｜）切成**同样份数**（≥2）；
+      4. 切出来的**每一份中文都含一个 mm 数值**。
+    Returns: (pairs 列表, 是否发生了拆分)
+    """
+    pairs = item.get("pairs") or []
+    if str(item.get("kind", "")).strip().lower() not in SIZE_KINDS or item.get("no_split"):
+        return pairs, False
+    out, changed = [], False
+    for pair in pairs:
+        cn = pair[0] or ""
+        en = (pair[1] if len(pair) > 1 else "") or ""
+        if en.strip() in NO_COPY_ALIASES:
+            out.append(pair)
+            continue
+        cps = SPLIT_SEP_RE.split(cn)
+        eps = SPLIT_SEP_RE.split(en)
+        if len(cps) < 2 or len(cps) != len(eps) or not all(DIM_RE.search(x) for x in cps):
+            out.append(pair)
+            continue
+        out.extend([[c.strip(), e.strip()] for c, e in zip(cps, eps)])
+        changed = True
+    return out, changed
+
+
 def block_html(item):
-    """图片之后插入的 HTML 块：占位段 → 图注 → 对照表。"""
+    """图片之后插入的 HTML 块：占位段 → 图注 → 中文提示 → 对照表。"""
     body = table_html(item["pairs"]) if item.get("pairs") else legacy_html(item)
     return (
         '<p style="font-size:1pt">&nbsp;</p>'
-        '<p style="text-align:center;font-size:9pt;color:#999999">%s</p>%s'
-    ) % (esc(item["cap"]), body)
+        '<p style="text-align:center;font-size:9pt;color:#999999">%s</p>%s%s'
+    ) % (esc(item["cap"]), tip_html(item), body)
 
 
 def main(job_path):
@@ -153,6 +233,16 @@ def main(job_path):
     root = job["image_root"]
     blocks = job["blocks"]
     out = job["out"]
+
+    # ---- 尺寸块拆行：一个尺寸一行（挤在一行不直观，客户明确要求分行）----
+    # 必须在统计句对数**之前**做，否则 STAT 与 verify_docx 的期望值会对不上。
+    for i, item in enumerate(blocks, 1):
+        new_pairs, changed = split_size_pairs(item)
+        if changed:
+            print("[INFO] 块 %02d 尺寸块自动拆行：%d → %d 行（一个尺寸一行）"
+                  % (i, len(item.get("pairs") or []), len(new_pairs)), flush=True)
+            item["pairs"] = new_pairs
+
     n_pairs = sum(len(b.get("pairs") or [[b.get("cn", ""), b.get("en", "")]]) for b in blocks)
     n_blank = 0
     for b in blocks:
@@ -172,6 +262,21 @@ def main(job_path):
         raise SystemExit(2)
     for w in C.consistency_warnings(job, resolved):
         print("[WARN] " + w, flush=True)
+
+    # ---- 固定文案口径闸门（客户指定译法，优先于一切通用术语）----
+    # 命中第〇节固定文案表就须逐字照抄；有违禁变体（Carbon Steel / Backplate / 单写 Shade …）
+    # 一律中止生成 —— 别把口径错的文档交付出去。确需跳过：加 --no-glossary-gate
+    if "--no-glossary-gate" not in sys.argv:
+        gr = G.scan(job_path)
+        for w in gr["warns"]:
+            print("[WARN] " + w, flush=True)
+        if gr["fails"]:
+            print("[STOP] 固定文案口径不一致，已中止生成（尚未创建文档）：", flush=True)
+            for x in gr["fails"]:
+                print("  [FAIL] " + x, flush=True)
+            print("  改好 job.json 后重跑；确要跳过本闸门加 --no-glossary-gate", flush=True)
+            raise SystemExit(2)
+        print("[OK] 固定文案口径一致（命中固定文案 %d 项）" % len(gr["oks"]), flush=True)
 
     fid = S.create_doc()
     print("[OK] create_doc ->", fid, flush=True)
@@ -215,7 +320,9 @@ def main(job_path):
         S.safe_overwrite(tmp_out, out)
 
     print("[OK] saved ->", out, flush=True)
-    print("[STAT] blocks=%d pairs=%d no_copy(/)%d" % (len(blocks), n_pairs, n_blank), flush=True)
+    print("[STAT] blocks=%d pairs=%d no_copy(/)%d tips=%d"
+          % (len(blocks), n_pairs, n_blank, sum(len(tip_lines(b)) for b in blocks)),
+          flush=True)
     print("FILE_ID=" + fid, flush=True)
 
 

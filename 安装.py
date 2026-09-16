@@ -30,6 +30,7 @@ NEEDED = [
     "references/translation-playbook.md",
     "scripts/build_bilingual_doc.py",
     "scripts/color_caliber.py",
+    "scripts/glossary_check.py",
     "scripts/edsdk_docx.py",
     "scripts/slice_long_images.py",
     "scripts/verify_docx.py",
@@ -116,7 +117,8 @@ def verify(dst):
         for m in missing:
             print("    -", m)
     else:
-        print("[ok] 8 个核心文件齐全（主流程 + 5 个脚本 + 翻译手册 + 色卡）")
+        print("[ok] %d 个核心文件齐全（主流程 + %d 个脚本 + 翻译手册 + 作业示例）"
+              % (len(NEEDED), len(NEEDED) - 3))
     return not missing
 
 

@@ -1,5 +1,5 @@
 {
-  "_note": "作业文件示例（BD111 珍珠镍壁灯实战节选）。pairs 为句对数组，每个句对 = 对照表里的一行（左格中文、右格英文）。img 相对 image_root，切片写 slices/xxx.jpg 且文件名用 ASCII。cap 格式『图 NN · 中文小标题（位置 1/2） / English Subtitle (Part 1/2)』。图内无可翻译文案时：中文格写一句说明，英文格写 \"/\"（写英文说明句会被误当成上架文案）。brand / target_lang 由开工前的确认结果填入。材质「碳素钢」统一写 Metal；颜色一律查 references/translation-playbook.md 第七节色卡。material 是本型号的材质清单，用于判定同名多译色（如砂岩黑）：材质里只有金属、无布 → Matte Black；材质含亚麻/布艺 → 脚本会中止生成并要求先与你确认。",
+  "_note": "作业文件示例（BD111 珍珠镍壁灯实战节选）。pairs 为句对数组，每个句对 = 对照表里的一行（左格中文、右格英文）。img 相对 image_root，切片写 slices/xxx.jpg 且文件名用 ASCII。cap 格式『图 NN · 中文小标题（位置 1/2） / English Subtitle (Part 1/2)』。图内无可翻译文案时：中文格写一句说明，英文格写 \"/\"（写英文说明句会被误当成上架文案）。尺寸标注块额外写 kind=\"size\"（自动带固定中文提示 + 自动把一行多个尺寸拆成一行一个尺寸）与可选 tip_cn（换措辞 / 传 \"\" 关闭）；想禁用自动拆行写 no_split=true。brand / target_lang 由开工前的确认结果填入。材质「碳素钢」统一写 Metal；颜色一律查 references/translation-playbook.md 第七节色卡。material 是本型号的材质清单，用于判定同名多译色（如砂岩黑）：材质里只有金属、无布 → Matte Black；材质含亚麻/布艺 → 脚本会中止生成并要求先与你确认。",
   "title_cn": "BD111 珍珠镍壁灯 · 详情页中英文案对照",
   "title_en": "BD111 Matte Brushed Nickel Wall Lamp — Bilingual Listing Copy",
   "brand": "Aisilan",
@@ -11,7 +11,8 @@
     "斜杠说明：英文栏为「/」表示该图片（或该行）没有可翻译的文案，属于正常情况、不是漏译。",
     "材质口径：「碳素钢」统一译为 Metal（不再写 Carbon Steel），全品类口径一致。",
     "颜色口径：颜色名称统一采用品牌标准色卡译法，本型号「珍珠镍」= Matte brushed nickel。",
-    "角标说明：图 02–05、08–13 图内右下角均为同一枚产品角标，文案为「Cohen Ambient Small Wall Lamp · DESIGN BY AISILAN · 金属为骨，光影为魂」（图 02、03 仅前两段），统一英文写法为「Cohen Ambient Small Wall Lamp · Designed by Aisilan · Framed in metal, ensouled by light.」。因各图完全一致，正文不再逐图重复列出。",
+    "尺寸口径：图 06 为尺寸标注图，每一行只写一个尺寸；图中「部位文案」仅为定位作用，如原图只有尺寸则忽略该英文文案、只取用 mm 及 inch 尺寸。",
+    "角标说明：图 02–05、08–13 图内右下角均为同一枚产品角标，文案为「Cohen Ambient Small Wall Lamp · DESIGN BY AISILAN · 金属为骨，光影为魂」（图 02、03 仅前两段），统一英文写法为「Cohen Ambient Small Wall Lamp · Designed by Aisilan · Metal as the framework, light as the soul.」。因各图完全一致，正文不再逐图重复列出。",
     "署名修改：图内原「DESIGN BY SAKA」统一改为「DESIGN BY AISILAN」，英文文案写法为「Designed by Aisilan」，原图角标文字需设计端同步替换。",
     "注：图中「萨摩护眼灯光谱」为光源对比示意，不确定是否为品牌名，英文统一处理为 Eye-Care Light Spectrum。",
     "注：图 14 中文小标题序号疑似有误（「三、五」与「二、四」标题重复），已按原图忠实保留，未自行改号。",
@@ -38,9 +39,25 @@
     },
     {
       "img": "BD111镍详情0817_04.jpg",
-      "cap": "图 04 · 细节设计 · 底座与灯臂 / Detail — Backplate & Arm",
+      "cap": "图 04 · 细节设计 · 底座与灯臂 / Detail — Base & Arm",
       "pairs": [
         ["本图仅有产品细节画面与角标，无文案（角标见文首说明）。", "/"]
+      ]
+    },
+    {
+      "img": "slices/BD111_06_a.jpg",
+      "cap": "图 06 · 尺寸标注（图上段 1/2） / Dimensions (Part 1/2)",
+      "kind": "size",
+      "tip_cn": "部位文案仅为定位作用，如原图只有尺寸则忽略该英文文案，只取用 mm 及 inch 尺寸。",
+      "pairs": [
+        ["部位文案（仅定位）：碳素钢底座", "Metal Base"],
+        ["部位文案（仅定位）：白玉磨砂玻璃", "Frosted White Jade Glass"],
+        ["部位文案（仅定位）：白玉磨砂玻璃", "Frosted White-Jade Glass"],
+        ["尺寸标注：225mm", "225mm (8.86in)"],
+        ["尺寸标注：485mm", "485mm (19.09in)"],
+        ["尺寸标注：260mm", "260mm (10.24in)"],
+        ["尺寸标注：25mm", "25mm (0.98in)"],
+        ["尺寸标注：Ø120mm", "Ø120mm (Ø4.72in)"]
       ]
     },
     {
